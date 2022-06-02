@@ -4,10 +4,12 @@
 \alias{volume_analysis}
 \title{Graph of Volume Indicators}
 \usage{
-volume_analysis(df, nameof)
+volume_analysis(df, name)
 }
 \arguments{
 \item{df}{Dataframe with price data.}
+
+\item{name}{A character string to add to the title  "____ Volume Analysis"}
 }
 \value{
 Returns plot_ly graph with PVI, NVI, Open and % Max Volatility

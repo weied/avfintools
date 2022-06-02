@@ -15,10 +15,10 @@ project(df, tickername)
 What comes out of this function
 }
 \description{
-Works with multiple time intervals
+Works with multiple time intervals. Do not oversupply with data, regression is expensive.
 }
 \examples{
-#Don't, oversupply with data, may overwhelm your local machine. Returns a graph with linear, quadratic, and cubic projections based on the associated regressions, along with the average of those predictions.
+
 project(tail(SPYdaily,200), "SPY")
 project(SPY15, "SPY")
 }

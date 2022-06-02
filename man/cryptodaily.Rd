@@ -7,7 +7,7 @@
 cryptodaily(coin_name)
 }
 \arguments{
-\item{ticker}{The ticker symbol as a string}
+\item{coin_name}{The ticker symbol for the concurrency as a string}
 }
 \value{
 A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.

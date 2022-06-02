@@ -22,5 +22,6 @@ Returns a vector of RSI calculations in dataframe format. If current = TRUE, ret
 Returns the Relative Strength Index with adjustable periods
 }
 \examples{
-Use case
+RSI(SPY15, 14)
+RSI(tail(SPYdaily,200), 14, current = TRUE, pricechange = 1.3)
 }

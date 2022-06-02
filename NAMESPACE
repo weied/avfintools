@@ -1,1 +1,11 @@
 exportPattern("^[[:alpha:]]+")
+importFrom("graphics", "layout")
+importFrom("methods", "show")
+importFrom("stats", "cor", "filter", "lm", "predict", "quantile", "sd")
+importFrom("utils", "tail", "timestamp")
+importFrom("alphavantager", "av_api_key", "av_get")
+importFrom("dplyr", "between", "intersect", "mutate")
+importFrom("ggplot2", "aes", "element_text", "geom_hline", "geom_line", "ggplot"
+           , "ggtitle", "theme", "ylim")
+importFrom("lubridate", "hour", "month", "hours")
+importFrom("plotly", "add_histogram", "add_trace", "ggplotly", "plot_ly")

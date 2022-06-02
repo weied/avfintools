@@ -6,6 +6,11 @@
 \usage{
 fastzoom(plot, x)
 }
+\arguments{
+\item{plot}{The plot to be zoomed into}
+
+\item{x}{A character string in the format("YYYYMMDD") for where to zoom in}
+}
 \value{
 The graph but zoomed in where you want to, mostly for daily data
 }

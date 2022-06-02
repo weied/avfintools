@@ -8,6 +8,10 @@ fibs(df, showgraph = TRUE, title = NULL)
 }
 \arguments{
 \item{df}{Dataframe with price data, works with various intervals}
+
+\item{showgraph}{Whether or not you want the function to pop out the visual}
+
+\item{title}{A character string for the Title of your graph}
 }
 \value{
 Returns graph with various levels as well as a vector

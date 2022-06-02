@@ -1,11 +1,24 @@
 Package: avfintools
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Financial Analysis Tools Using Data from Alpha Vantager
 Version: 0.1.0
 Author: Edward Wei
-Maintainer: edwwei2020@gmail.com
-Description: A complement to the alphavantager library from Cran R. Contains commonly used qunatitative finance tools.
-License: creative commons universal 1.0
+Maintainer: Edward Wei <edwwei2020@gmail.com>
+Description: Always enter your key using the av_api_key function from 
+  alphavantager before using any part of this package. This is a complement to 
+  the alphavantager package from CRAN. Contains commonly used qunatitative 
+  finance tools. Avfintools stands for Alpha Vantager Finance Tools, as 
+  it depends on sourcing financial data from the Alpha Vantager API.
+License: CC0 1.0 Universal
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
+Depends: 
+    R(>= 4.0),
+    alphavantager(>= 0.1.2),
+    dplyr(>= 1.0.9),
+    lubridate(>= 1.8.0),
+    plotly(>= 4.10.0),
+    ggplot2(>= 3.3.6)
+Imports:
+    methods(>= 4.2.0)

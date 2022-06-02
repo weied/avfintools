@@ -6,7 +6,7 @@ library(lubridate)
 library(plotly)
 library(ggplot2)
 
-av_api_key("YOUR_AV_KEY_HERE")
+#av_api_key("YOUR_AV_KEY_HERE")
 
 
 #Get Data from Stocks
@@ -81,7 +81,7 @@ get60 <- function (ticker, truncated = TRUE) {
   if (truncated == TRUE) {
     retdata <- filter(retdata, between(hour(timestamp), 7, 13))
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
-  } else {
+  } else {a
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
   }
 }
@@ -117,7 +117,7 @@ get5 <- function (ticker, truncated = TRUE) {
 #' Get Cryptocurrency Data at the hourly level localized to current time zone
 #'
 #' Summary statistics for the movements on the hourly level
-#' @param ticker The ticker symbol as a string
+#' @param coin_name The ticker symbol for the concurrency as a string
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' Adjusted to local time zone.
 #' @examples
@@ -127,20 +127,20 @@ crypto60 <- function(coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = "CRYPTO_INTRADAY", interval = "60min", outputsize = "full", market = "USD")
   retdata <- addreturns(retdata)
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
-  assign(paste0(coin_name, '1h'), addreturns(retdata), envir = .GlobalEnv)
+  assign(paste0(coin_name, '60'), addreturns(retdata), envir = .GlobalEnv)
 }
 
 #' Get Cryptocurrency Data at the Daily Level
 #'
 #' Daily, as in the summary statistics for the daily movement
-#' @param ticker The ticker symbol as a string
+#' @param coin_name The ticker symbol for the concurrency as a string
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' @examples
 #' cryptodaily("WTI")
 #' @export
 cryptodaily <- function (coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = 'DIGITAL_CURRENCY_DAILY', market = 'USD')
-  assign(paste0(coin_name, '1d'), retdata, envir = .GlobalEnv)
+  assign(paste0(coin_name, 'daily'), retdata, envir = .GlobalEnv)
 }
 
 
@@ -369,16 +369,16 @@ addreturns <- function (df) {
 
 #' Projects future prices based on regression
 #'
-#' Works with multiple time intervals
+#' Works with multiple time intervals. Do not oversupply with data, regression is expensive.
 #' @param df Dataframe with price data. The opening price is used for projection purposes, works for all security types
 #' @param tickername The ticker or the security you are putting in.
 #' @return What comes out of this function
 #' @examples
-#' #Don't, oversupply with data, may overwhelm your local machine. Returns a graph with linear, quadratic, and cubic projections based on the associated regressions, along with the average of those predictions.
+#'
 #' project(tail(SPYdaily,200), "SPY")
 #' project(SPY15, "SPY")
 #' @export
-project <- function(df, tickername) {
+project_price <- function(df, tickername) {
   df <- df %>% mutate(hs =  as.numeric(timestamp - df$timestamp[1], units = 'hours')) %>%
     mutate(hs2 = hs^2) %>%
     mutate(hs3 = hs^3)
@@ -566,18 +566,19 @@ volp <- function(df) {
 #'
 #' Follows Open, PVI,  NVI, and %Max Volatility
 #' @param df Dataframe with price data.
+#' @param name A character string to add to the title  "____ Volume Analysis"
 #' @return Returns plot_ly graph with PVI, NVI, Open and % Max Volatility
 #' @examples
 #' volume_analysis(SPY15, "SPY")
 #' @export
-volume_analysis <- function(df, nameof) {
+volume_analysis <- function(df, name) {
   df <- df %>%  dplyr::mutate(nvi(df)) %>% dplyr::mutate(pvi((df))) %>% dplyr::mutate(volp(df))
   plot_ly(df, type='scatter', mode = 'lines') %>%
     add_trace(x =~timestamp, y =~open, name = 'Open') %>%
     add_trace(x =~timestamp, y =~pvi, name = 'PVI') %>%
     add_trace(x =~timestamp, y =~nvi, name = 'NVI') %>%
     add_trace(x =~timestamp, y =~volp, name = '% Max Vol.') %>%
-    layout(title = paste(nameof, 'Volatility Analysis'))
+    layout(title = paste(name, 'Volatility Analysis'))
 }
 
 #' Streak
@@ -670,6 +671,8 @@ streak_var = function (df, var) { #streak2 lets you choose which variable to cou
 #'
 #' Displays Fibonacci bands
 #' @param df Dataframe with price data, works with various intervals
+#' @param showgraph Whether or not you want the function to pop out the visual
+#' @param title A character string for the Title of your graph
 #' @return Returns graph with various levels as well as a vector
 #' @examples
 #' fibs(tail(SPYdaily, 200))
@@ -764,7 +767,8 @@ candles = function(df) { #df name to be typed in string
 #' @param pricechange Input in percentage
 #' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent RSI.
 #' @examples
-#' Use case
+#' RSI(SPY15, 14)
+#' RSI(tail(SPYdaily,200), 14, current = TRUE, pricechange = 1.3)
 #' @export
 RSI = function(df, periods, current = FALSE, pricechange = NULL) {
   rets = df$tot_ret
@@ -914,7 +918,7 @@ ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for tra
   }
 
   if(current == TRUE){
-    print(paste("In the past", as.character(daysu), "days the low is", as.character(mincur), "while the high is", as.character(maxcur)))
+    print(paste("In the past", as.character(period), "days the low is", as.character(mincur), "while the high is", as.character(maxcur)))
     rng = maxcur - mincur
     percentile = ((mrprice - mincur)/rng) * 100
     print(paste0(as.character(mrprice), " is ", as.character(percentile), "th percentile of the above range" ))
@@ -927,7 +931,8 @@ ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for tra
 #' Fast Zoom
 #'
 #' An Easy way to get to where you want to on a candlestick chart or other plots
-#' @param plot
+#' @param plot The plot to be zoomed into
+#' @param x A character string in the format("YYYYMMDD") for where to zoom in
 #' @return The graph but zoomed in where you want to, mostly for daily data
 #' @examples
 #' fastzoom(candles(SPYdaily), "20220202")
