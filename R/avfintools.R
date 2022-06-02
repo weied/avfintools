@@ -50,14 +50,22 @@ get15 <- function (ticker, truncated = TRUE) {
 
 }
 
-getwkly <- function (ticker) {
-  retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_WEEKLY', outputsize = 'full')
-  assign(paste0(ticker, 'weekly'), addreturns(retdata), envir = .GlobalEnv)
+#' Get Stock Data at the Weekly level
+#'
+#' Summary statistics for the stock movements on the weekly
+#' @param ticker The ticker symbol as a string
+#' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
+#' @examples
+#' getweekly("WTI")
+getweekly <- function(ticker){
+  retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_Weekly')
+  retdata <- addreturns(retdata)
+  assign(paste0(ticker, 'wk'), addreturns(retdata), envir = .GlobalEnv)
 }
 
 #' Get Stock Data at the hourly level localized to current time zone
 #'
-#' Summary statistics for the movements on the 15 hourly level
+#' Summary statistics for the movements on the hourly level
 #' @param ticker The ticker symbol as a string
 #' @param truncated Option to limit output to hours closer to market open hours. Default is true.
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
@@ -102,28 +110,53 @@ get5 <- function (ticker, truncated = TRUE) {
 }
 
 
-getweekly <- function(ticker){
-  retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_Weekly')
-  retdata <- addreturns(retdata)
-  assign(paste0(ticker, 'wkl'), addreturns(retdata), envir = .GlobalEnv)
-}
-
 
 
 #Get Crypto
-cr1h <- function(coin_name) {
+
+#' Get Cryptocurrency Data at the hourly level localized to current time zone
+#'
+#' Summary statistics for the movements on the hourly level
+#' @param ticker The ticker symbol as a string
+#' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
+#' Adjusted to local time zone.
+#' @examples
+#' crypto60("BTC")
+#' @export
+crypto60 <- function(coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = "CRYPTO_INTRADAY", interval = "60min", outputsize = "full", market = "USD")
   retdata <- addreturns(retdata)
-  retdata <- retdata %>% dplyr::mutate(timestamp = timestamp + hours(3))
+  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.time()))
   assign(paste0(coin_name, '1h'), addreturns(retdata), envir = .GlobalEnv)
 }
-cr1d <- function (coin_name) {
+
+#' Get Cryptocurrency Data at the Daily Level
+#'
+#' Daily, as in the summary statistics for the daily movement
+#' @param ticker The ticker symbol as a string
+#' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
+#' @examples
+#' cryptodaily("WTI")
+#' @export
+cryptodaily <- function (coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = 'DIGITAL_CURRENCY_DAILY', market = 'USD')
   assign(paste0(coin_name, '1d'), retdata, envir = .GlobalEnv)
 }
 
 
-#Works only with daily data
+#Daily data Analytics
+
+#' Compare returns visually between two securities
+#'
+#' Prints a plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns
+#' @param a The first dataframe filled with data from the function getdaily()
+#' @param b The second dataframe filled with data from the function getdaily()
+#' @param a_name Character string name for first dataframe
+#' @param b_name Character string name for second dataframe
+#' @return Returns plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns. Click graph name to un/toggle for better visibility.
+#' @examples
+#' compare_returns(GMEdaily, SPYdaily, "GME", "SPY")
+#' @export
 compare_returns <- function (a, b, a_name, b_name){
   comb <- merge(a, b, by='timestamp')
   print(names(comb))
@@ -153,6 +186,15 @@ compare_returns <- function (a, b, a_name, b_name){
   print(paste(a_name, "vs.", b_name, "Returns"))
   return(fig2)
 }
+
+#' After-hour and Pre-market Returns
+#'
+#' Show returns between the close of the last trading day and the open of the current trading day
+#' @param df Dataframe with daily data
+#' @return A vector in dataframe format of combined after-hour, overnight, and pre-market returns in percentage
+#' @examples
+#' idret(SPYdaily)
+#' @export
 idret <- function(df){
   counter <- dim(df)[1]
   blank <- data.frame(rep(0,dim(df)[1]))
@@ -169,6 +211,15 @@ idret <- function(df){
   colnames(blank) <- 'idreturns'
   return(blank)
 }
+
+#' Total return to multiplicative return
+#'
+#' Multiplicative returns are always comparative to the earliest return
+#' @param df Dataframe with daily data
+#' @return A vector in dataframe format cumulative multiplicative returns
+#' @examples
+#' trtomr(SPYdaily)
+#' @export
 trtomr <- function(df) {
   counter <- dim(df)[1]
   blank <- data.frame(rep(0,dim(df)[1]))
@@ -185,6 +236,15 @@ trtomr <- function(df) {
   return(blank)
 
 }
+
+#' Total return to cumulative return
+#'
+#' The cumulative percentage is the addition of subsequent total daily returns.
+#' @param list_of_returns Vector in dataframe showing returns
+#' @return A vector in dataframe format cumulative percentage returns
+#' @examples
+#' ret_to_cr(SPYdaily$returns)
+#' @export
 ret_to_cr <- function(list_of_returns) {
   blank <- data.frame(rep(0,length(list_of_returns)))
   counter = length(list_of_returns)
@@ -204,6 +264,15 @@ ret_to_cr <- function(list_of_returns) {
   return(blank)
 }
 
+#' Frequency plot of subsequent returns after a ___ % Change
+#'
+#' Returns a frequency plot drawn from historical data based on % change that occurred
+#' @param dataset Dataframe with daily data
+#' @param price_input the price movement, in percent, of the most recent (or whatever you are interested in) trading day
+#' @return percentage frequency plot of the following day based on historical data
+#' @examples
+#' thedayafter(SPYdaily, -1.35)
+#' @export
 thedayafter <- function(dataset, price_input){
   stdev <- sd(dataset$returns)
   meme <- mean(dataset$returns)
@@ -226,16 +295,37 @@ thedayafter <- function(dataset, price_input){
   print(paste(as.character(round((sum(ndf$idreturns>0)/length(ndf$idreturns)) * 100, 2)), " % of the time, after-hours of this day/ pre-market of next day are  positive"))
   plot_ly(ndf, type = 'histogram', x=~returns, histnorm = 'probability', name = 'Trading Day') %>% add_histogram(x = ~idreturns, name = "AH + PM") %>% layout(title = paste('One Day Returns after', as.character(price_input), '% change'))
 }
-sadvolatility2 <- function(df, tick_name) {
+
+#' Cumulative Frequency plot of Range, as well as maximun Upward and Downward Movement
+#'
+#' a plot_ly plot
+#' @param df Dataframe with daily data
+#' @param tick_name The ticker so the graph is correct
+#' @return Cumulative frequency plot where you can find intraday volatility (range), maximun upside (Upward Movement), maximun downside (Downward Movement) on a cumulative percentile basis
+#' @examples
+#' volatilty_freq(SPYdaily, "SPY")
+#' @export
+volatilty_freq_cum <- function(df, tick_name) {
 
   df <- df %>% dplyr::mutate(hilow = high - low)
   df <- df %>% dplyr::mutate(hilowp = hilow/open * 100)
   df <- df %>% dplyr::mutate(openhi = (high - open)/open * 100)
   df <- df %>% dplyr::mutate(openlow = (low - open)/open * 100 * -1)
 
-  plot_ly(df, x=~hilowp, type= 'histogram', cumulative = list(enabled = TRUE), histnorm = 'probability', name = 'Intraday Volatility') %>% add_histogram(x = ~openhi, name = 'Upward Movement') %>% add_histogram(x = ~openlow, name = 'Downward Movement') %>% layout(title = paste(tick_name, 'Intraday Movement Percentiles'), xaxis = list(title = 'Return in %s'))
 }
-sadvolatility <- function(df, tick_name) {
+
+#' Frequency plot of Range, as well as maximum Upward and Downward Movement
+#'
+#' a plot_ly plot
+#' @param df Dataframe with daily data
+#' @param tick_name The ticker so the graph is correct
+#' @param cumulative Default is FALSE, turn to TRUE for a cumulative plot.
+#' @return Frequency plot where you can find intraday volatility (range), maximun upside (Upward Movement), maximun downside (Downward Movement) on a cumulative percentile basis
+#' @examples
+#' volatilty_freq_cum (SPYdaily, "SPY")
+#' @export
+
+volatility_freq <- function(df, tick_name, cumulative = FALSE) {
 
   df <- df %>% dplyr::mutate(hilow = high - low)
   df <- df %>% dplyr::mutate(hilowp = hilow/open * 100)
@@ -246,13 +336,26 @@ sadvolatility <- function(df, tick_name) {
   print(summary(df$openlow))
   print(paste(tick_name, 'goes up',as.character((100 *sum(df$returns > 0))/dim(df)[1]), '% of the time from market open to close'))
 
+  if(cumulative == TRUE) {
+    df <- df %>% dplyr::mutate(openlow = (low - open)/open * 100 * -1)
+    return(plot_ly(df, x=~hilowp, type= 'histogram', cumulative = list(enabled = TRUE), histnorm = 'probability', name = 'Intraday Volatility') %>% add_histogram(x = ~openhi, name = 'Upward Movement') %>% add_histogram(x = ~openlow, name = 'Downward Movement') %>% layout(title = paste(tick_name, 'Intraday Movement Percentiles'), xaxis = list(title = 'Return in %s')))
+
+  }
+
   plot_ly(df, x=~hilowp, type= 'histogram', histnorm = 'probability', name = 'Intraday Volatility') %>%
     add_histogram(x = ~openhi, name = 'Max Upside') %>%
     add_histogram(x = ~openlow, name = 'Max Downside') %>%
     layout(title = paste('Return Profiles for', tick_name), xaxis = list(title = 'Return in %s'))
 }
 
-
+#' Adds various returns as well as additional statistics.
+#'
+#' Adds percentage returns, interday returns, total returns, cumulative returns, multiplicative returns, range, and dollar returns to the default dataframe pulled from alphavantager
+#' @param df Dataframe pulled from alphavantager
+#' @return A more detailed dataframe with additiona return metrics and summary statistics.
+#' @examples
+#' addreturns(daily_data_from_av)
+#' @export
 addreturns <- function (df) {
   df <- df %>% mutate(returns = 100* (close - open)/(open))
   df <- df %>% dplyr::mutate(idret(df))
@@ -263,11 +366,18 @@ addreturns <- function (df) {
   df <- df %>% dplyr::mutate(d_ret = close - open)
   return(df)
 }
-addreturnsd <- function(df) {
-  df <- df %>% dplyr::mutate(returnsd = close - open)
-  df <- df %>% dplyr::mutate(tr3(df)) #trailing 3 wherether it is weeks, days, whatever the data unit is.
-  return(df)
-}
+
+#' Projects future prices based on regression
+#'
+#' Works with multiple time intervals
+#' @param df Dataframe with price data. The opening price is used for projection purposes, works for all security types
+#' @param tickername The ticker or the security you are putting in.
+#' @return What comes out of this function
+#' @examples
+#' #Don't, oversupply with data, may overwhelm your local machine. Returns a graph with linear, quadratic, and cubic projections based on the associated regressions, along with the average of those predictions.
+#' project(tail(SPYdaily,200), "SPY")
+#' project(SPY15, "SPY")
+#' @export
 project <- function(df, tickername) {
   df <- df %>% mutate(hs =  as.numeric(timestamp - df$timestamp[1], units = 'hours')) %>%
     mutate(hs2 = hs^2) %>%
@@ -294,62 +404,36 @@ project <- function(df, tickername) {
     add_trace(x = ndf$btime, y = pr4, name = 'Average')%>%
     layout(title = paste(tickername, 'Projections'), yaxis = list(title = 'Price in Dollars'), xaxis = list(title = 'Dates'))
 }
+
+#' Calculate the correlation between a column shared within two dataframes.
+#'
+#' Two dataframes from one of the "get" functions recommended, but works with any dataframe that shares columns as well as column lengths.
+#' @param a First dataframe
+#' @param b Second dataframe
+#' @param sdata A string of the column name to compare
+
+#' @return The correlation as a single numeric.
+#' @examples
+#' findcor(SPYdaily, GMEdaily, "returns")
+#' @export
 findcor<- function (a, b, sdata) {
   ndf = merge(a, b, by = 'timestamp')
   cors <- cor(eval(parse(text = paste0('ndf$', sdata, '.x'))),eval(parse(text = paste0('ndf$', sdata, '.y' ))))
   return(cors)
 }
-#sdata is logged in as a string, it is the column name which to compare correlation with
-ma5days <- function(df) {
-  counter <- dim(df)[1]
-  blank <- data.frame(rep(0,dim(df)[1]))
-  i <- 0
-  while (counter != 0)
-  {
-    i = i + 1
-    dr <- df[1:i,]
-    cd <- df$timestamp[i]
-    da5 <- date(df$timestamp[i]) - 5
-    fd <- intersect(filter(dr, timestamp >= da5), filter(dr, timestamp <= cd))
-    n = dim(fd)[1]
-    blank[i,] = sum(fd$high + fd$low)/(n*2)
-    counter = counter - 1
-  }
-  colnames(blank) <- 'ma5days'
-  print(fd)
-  return(blank)
-}
-sma <- function(df, name) {
-  df <- df %>% dplyr::mutate(ma5days(df))
 
-  plot_ly(df, type = 'scatter', mode = 'lines') %>%
-    add_trace(x = ~timestamp, y =~open, name = 'Open') %>%
-    add_trace(x = ~timestamp, y = ~ma5days, name = '5 Day Trailing Average') %>%
-    layout (title = paste(name, 'with 5 Day Moving Average'))
-}
-eod_price_projection = function (df, open, high, low, direction) {
-  df = df %>% dplyr::mutate(ratio = d_ret/range)
-  factor1 = tr3l(df$range)
-  factor2 = tr3l(df$ratio)
-  ratio = as.numeric(df$ratio)
-  meanra = mean(ratio[!sapply(ratio, is.nan)])
-  ndf = data.frame(cbind(factor1, factor2, ratio))
-  ln1 = lm(ratio ~. , ndf)
-  pv1 = as.numeric(predict(ln1, ndf))
-  rfactor = meanra + (abs((tail(pv1,1)- meanra ) *30))
-  print(rfactor)
-
-  if(direction == -1) {
-    closep = open - (high - low) * rfactor
-  }
-  if(direction == 1) {
-    closep = open + (high - low) * rfactor
-  }
-  return(closep)
-} #direction = 1 for upday, -1 for downday
-
-
-
+#' Frequency plot based on Absolute percentage movements
+#'
+#' Shows the cumulative probabilities of each percentage movement
+#' @param df Dataframe from the "get"
+#' @param name_in_string Name of security associated with dtaframe
+#' @return A plot_ly graph showing the frequency of absolute returns.
+#' "All Data" - no data omitted
+#' "Cumulative Probability" Cumulative frequency graph of returns
+#' "No Extremes" filter out skewed data
+#' @examples
+#' showidreturns(SPYdaily, "SPY")
+#' @export
 showidreturns <- function(df, name_in_string) {
 
   ub <- as.numeric(quantile(df$idreturns, probs = .95) * 3)
@@ -397,6 +481,14 @@ showidreturns <- function(df, name_in_string) {
 
 }
 
+#' Negative Volume Index
+#'
+#' Calculates the  negative volume index, uses closing price of the time period
+#' @param df Dataframe with price data.
+#' @return Returns a 1 x # of columns in df dataframe
+#' @examples
+#' nvi(tail(SPYdaily, 200))
+#' @export
 nvi <- function(df) {
   blank <- data.frame(rep(0,dim(df)[1]))
   counter = dim(df)[1]
@@ -421,6 +513,15 @@ nvi <- function(df) {
   }
   return(blank * df$open[1])
 }
+
+#' Positive Volume Index
+#'
+#' Calculates the  positive volume index, uses closing price of the time period
+#' @param df Dataframe with price data
+#' @return Returns a 1 x # of columns in df dataframe
+#' @examples
+#' pvi(tail(SPYdaily, 200))
+#' @export
 pvi <- function(df) {
   blank <- data.frame(rep(0,dim(df)[1]))
   counter = dim(df)[1]
@@ -445,13 +546,31 @@ pvi <- function(df) {
   }
   return(blank * df$open[1])
 }
+
+#' Relative percentage from the Maximun Value
+#'
+#' Returns the percent of the maximum volume movemen from datat
+#' @param df Dataframe with price data.
+#' @return Returns a 1 x # of columns in df dataframe in percentage
+#' @examples
+#' volp(tail(SPYdaily, 200))
+#' @export
 volp <- function(df) {
   blank <- data.frame(rep(0,dim(df)[1]))
   colnames(blank) <- 'volp'
   blank = df$volume * 100 / max(df$volume)
   return(blank)
 }
-volanal <- function(df, nameof) {
+
+#' Graph of Volume Indicators
+#'
+#' Follows Open, PVI,  NVI, and %Max Volatility
+#' @param df Dataframe with price data.
+#' @return Returns plot_ly graph with PVI, NVI, Open and % Max Volatility
+#' @examples
+#' volume_analysis(SPY15, "SPY")
+#' @export
+volume_analysis <- function(df, nameof) {
   df <- df %>%  dplyr::mutate(nvi(df)) %>% dplyr::mutate(pvi((df))) %>% dplyr::mutate(volp(df))
   plot_ly(df, type='scatter', mode = 'lines') %>%
     add_trace(x =~timestamp, y =~open, name = 'Open') %>%
@@ -460,6 +579,16 @@ volanal <- function(df, nameof) {
     add_trace(x =~timestamp, y =~volp, name = '% Max Vol.') %>%
     layout(title = paste(nameof, 'Volatility Analysis'))
 }
+
+#' Streak
+#'
+#' Counts the number of days the open price has moved consecutively
+#' Negative and positive streaks are represented by their sign
+#' @param df Dataframe with price data.
+#' @return Returns a 1 x # of columns in df dataframe
+#' @examples
+#' streak(tail(SPYdaily, 200))
+#' @export
 streak = function (df) { # streak will return a positive or negative number that shows the number of times it has moved in the same direction, with positive numbers representing an upward movement and downward movements symbolized by a negative number
   counter <- dim(df)[1]
   blank <- data.frame(rep(0,dim(df)[1]))
@@ -492,7 +621,18 @@ streak = function (df) { # streak will return a positive or negative number that
   return(blank)
 
 }
-streak2 = function (df, var) { #streak2 lets you choose which variable to count the streak of
+
+#' Streak (Multiple Variables)
+#'
+#' Counts the number of days the open price has moved consecutively
+#' Negative and positive streaks are represented by their sign; only works with various types of returns or mutated vector created by diff()
+#' @param df Dataframe with price data.
+#' @param var String of column name you wish to see streak in
+#' @return Returns a 1 x # of columns in df dataframe
+#' @examples
+#' streak2(tail(SPYdaily,200), "tot_ret")
+#' @export
+streak_var = function (df, var) { #streak2 lets you choose which variable to count the streak of
   counter <- dim(df)[1]
   blank <- data.frame(rep(0,dim(df)[1]))
   i <- 1
@@ -525,41 +665,17 @@ streak2 = function (df, var) { #streak2 lets you choose which variable to count 
   return(blank)
 
 }
-tr3 <- function(df){
-  counter <- dim(df)[1] - 3
-  blank <- data.frame(rep(0,dim(df)[1]))
-  i <- 3
-  while (counter != 0)
-  {
-    i = i + 1
-    j = i - 1
-    k = i - 2
-    l = i - 3
-    travage = ((df$high[j] + df$low[j])/2 + (df$high[k] + df$low[k])/2 + (df$high[l] + df$low[l])/2)/3
-    blank[i,] = travage
-    counter = counter - 1
-  }
-  colnames(blank) <- 'tr3'
-  return(blank)
-}
-tr3l<- function(list) {
-  counter <- length(list) - 3
-  blank <- rep(0,length(list))
-  i <- 3
-  while (counter != 0)
-  {
-    i = i + 1
-    j = i - 1
-    k = i - 2
-    l = i - 3
-    travage = (list[j] + list[k] + list[l])/3
-    blank[i] = travage
-    counter = counter - 1
-  }
-  return(blank)
-}
 
-
+#' Show Fibonacci bands
+#'
+#' Displays Fibonacci bands
+#' @param df Dataframe with price data, works with various intervals
+#' @return Returns graph with various levels as well as a vector
+#' @examples
+#' fibs(tail(SPYdaily, 200))
+#' SPYdailyfibs <- fibs(tail(SPYdaily, 200))
+#' fibs(SPY15)
+#' @export
 fibs = function(df, showgraph = TRUE, title = NULL) {
   fib = c(.03, .05, .08, .13, .21, .34)
   l = length(fib)
@@ -618,23 +734,18 @@ fibs = function(df, showgraph = TRUE, title = NULL) {
     return(lines)
   }
 } # Works on 15 minute level data
-hi8 = function(his, selname) { #Takes a list of highs, stores them, and creates an average that gets updated once each time, with the element in the end being replaced by the 'new' high. Selname means selected name, it will be a string
-  li8 = rep(0, 8)
-  counter = length(his)
-  liret = tibble(rep(0, counter))
-  l = 1
-  while (counter > 0) {
-    li8 = li8[2:8]
-    li8 = append(li8, his[l])
-    liret[l] = mean(li8)
-    l = l+1
-    counter = counter - 1
-  }
-  liret = t(liret[1,])
-  colnames(liret) = selname
-  rownames(liret) = NULL
-  return(liret)
-}
+
+
+#' Candlestick chart
+#'
+#' Returns plot_ly candlestick chart
+#' @param df Dataframe with price data.
+#' @return A candlestick  chart
+#' @examples
+#' candles(SPYdaily)
+#' candles(SPY60)
+#' candles(SPYwk)
+#' @export
 candles = function(df) { #df name to be typed in string
   fig = plot_ly(df, x = ~timestamp, type="candlestick",
                 open = ~open, close = ~close,
@@ -642,34 +753,19 @@ candles = function(df) { #df name to be typed in string
                                                                                      xaxis = list(rangeslider = list(visible = F)))
   return(fig)
 }
-ATR = function(df, daysu, deRSI = FALSE, delta = NULL) { #days used for trading average Day's end RSI is used to calculate the RSI
-  atrs = list()
-  highs = df$high
-  lows = df$low
-  closes = df$close
-  for (i in 1:dim(df)[1]) {
-    if (i < daysu) {
-      curhighs = highs[1:i]
-      curlows = lows[1:i]
-      curcloses = closes[1:i]
-      a1 = max(curhighs) - min(curlows)
-      a2 = max(curhighs) - min(curcloses)
-      a3 = max(curcloses) - min(curlows)
-      atrs[i] = max(c(a1,a2,a3))
-    }
-    if (i >= daysu) {
-      curhighs = highs[(i - daysu) : i]
-      curlows = lows[(i - daysu) : i]
-      curcloses = closes[(i - daysu) : i]
-      a1 = max(curhighs) - min(curlows)
-      a2 = max(curhighs) - min(curcloses)
-      a3 = max(curcloses) - min(curlows)
-      atrs[i] = max(c(a1,a2,a3))
-    }
 
-  }
-  return(unlist(atrs))
-}
+
+#' Relative Strength Index
+#'
+#' Returns the Relative Strength Index with adjustable periods
+#' @param df Dataframe with price data
+#' @param periods Calculation Period
+#' @param current If one wants to input the latest price point before data updates, RSI uses the percentage return at the end of the market hours
+#' @param pricechange Input in percentage
+#' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent RSI.
+#' @examples
+#' Use case
+#' @export
 RSI = function(df, periods, current = FALSE, pricechange = NULL) {
   rets = df$tot_ret
   rs1 = c()
@@ -742,6 +838,17 @@ RSI = function(df, periods, current = FALSE, pricechange = NULL) {
   return(rs2)
 
 }
+
+#' Generate moving averages
+#'
+#' Description
+#' @param df Dataframe with price data
+#' @param ma # of periods for the moving average to calculate
+#' @return a vector with the same number of columns as df showing the moving averages. Periods before moving
+#' average should be not considered for use. Output is kept same columns for compatability.
+#' @examples
+#' SPYDMA200 <- genMA(SPYdaily, 14)
+#' @export
 genMA = function(df, ma) { #This is a generalized function that allows you to find moving average based on the timeframe of candlestick data. Returns a list that allows for
   rp = (df$high + df$low)/2
   d1 = dim(df)[1]
@@ -762,13 +869,26 @@ genMA = function(df, ma) { #This is a generalized function that allows you to fi
   }
   return(unlist(nl))
 }
-ATR = function(df, daysu, current = FALSE, mrprice = NULL) { #days used for trading average Day's end RSI is used to calculate the RSI
+
+#' Average True Range
+#'
+#' Returns the average true range, as well as the relative price based on the ATR as a reference
+#' @param df Dataframe with price data.
+#' @param period Calculation period
+#' @param current If one wants to input the latest price point before data update
+#' @param mrprice Most recent price;
+#' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
+#' @examples
+#' ATR(tail(SPYdaily, 200), 4)
+#' ATR(tail(SPYdaily, 200), 4, current = TRUE, mrprice = tail(SPYdaily$close, 1) + 3)
+#' @export
+ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for trading average Day's end RSI is used to calculate the RSI
   atrs = list()
   highs = df$high
   lows = df$low
   closes = df$close
   for (i in 1:dim(df)[1]) {
-    if (i < daysu) {
+    if (i < period) {
       curhighs = highs[1:i]
       curlows = lows[1:i]
       curcloses = closes[1:i]
@@ -779,10 +899,10 @@ ATR = function(df, daysu, current = FALSE, mrprice = NULL) { #days used for trad
       mincur = min(curlows)
       maxcur = max(curhighs)
     }
-    if (i >= daysu) {
-      curhighs = highs[(i - daysu) : i]
-      curlows = lows[(i - daysu) : i]
-      curcloses = closes[(i - daysu) : i]
+    if (i >= period) {
+      curhighs = highs[(i - period) : i]
+      curlows = lows[(i - period) : i]
+      curcloses = closes[(i - period) : i]
       a1 = max(curhighs) - min(curlows)
       a2 = max(curhighs) - min(curcloses)
       a3 = max(curcloses) - min(curlows)
@@ -803,6 +923,15 @@ ATR = function(df, daysu, current = FALSE, mrprice = NULL) { #days used for trad
   }
   return(unlist(atrs))
 }
+
+#' Fast Zoom
+#'
+#' An Easy way to get to where you want to on a candlestick chart or other plots
+#' @param plot
+#' @return The graph but zoomed in where you want to, mostly for daily data
+#' @examples
+#' fastzoom(candles(SPYdaily), "20220202")
+#' @export
 fastzoom = function (plot, x) {
   zplot = plot %>% layout(xaxis = list( range = c( (as.Date(x, '%Y%m%d')), (as.Date(x, '%Y%m%d') + 1))))
   return(zplot)
