@@ -1,0 +1,11 @@
+Package: avfintools
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Author: Edward Wei
+Maintainer: edwwei2020@gmail.com
+Description: A complement to the alphavantager library from Cran R. Contains commonly used qunatitative finance tools.
+License: creative commons universal 1.0
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.0
