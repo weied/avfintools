@@ -40,7 +40,7 @@ getdaily <- function (ticker) {
 get15 <- function (ticker, truncated = TRUE) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_INTRADAY', outputsize = 'full', interval = '15min')
   retdata <- addreturns(retdata)
-  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.time()))
+  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
     retdata <- filter(retdata, between(hour(timestamp), 6, 13))
     assign(paste0(ticker, '15'), addreturns(retdata), envir = .GlobalEnv)
@@ -77,7 +77,7 @@ getweekly <- function(ticker){
 get60 <- function (ticker, truncated = TRUE) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_INTRADAY', outputsize = 'full', interval = '60min')
   retdata <- addreturns(retdata)
-  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.time()))
+  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
     retdata <- filter(retdata, between(hour(timestamp), 7, 13))
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
@@ -100,7 +100,7 @@ get60 <- function (ticker, truncated = TRUE) {
 get5 <- function (ticker, truncated = TRUE) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_INTRADAY', outputsize = 'full', interval = '5min')
   retdata <- addreturns(retdata)
-  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.time()))
+  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
     retdata <- filter(retdata, between(hour(timestamp), 6, 13))
     assign(paste0(ticker, '5'), addreturns(retdata), envir = .GlobalEnv)
@@ -126,7 +126,7 @@ get5 <- function (ticker, truncated = TRUE) {
 crypto60 <- function(coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = "CRYPTO_INTRADAY", interval = "60min", outputsize = "full", market = "USD")
   retdata <- addreturns(retdata)
-  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.time()))
+  retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   assign(paste0(coin_name, '1h'), addreturns(retdata), envir = .GlobalEnv)
 }
 
