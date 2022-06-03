@@ -9,16 +9,16 @@ Description: Always enter your key using the av_api_key function from
   the alphavantager package from CRAN. Contains commonly used qunatitative 
   finance tools. Avfintools stands for Alpha Vantager Finance Tools, as 
   it depends on sourcing financial data from the Alpha Vantager API.
-License: CC0 1.0 Universal
+License: CC0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
 Depends: 
-    R(>= 4.0),
+    R(>= 4.0)
+Imports:
+    methods(>= 4.2.0),
     alphavantager(>= 0.1.2),
     dplyr(>= 1.0.9),
     lubridate(>= 1.8.0),
     plotly(>= 4.10.0),
-    ggplot2(>= 3.3.6)
-Imports:
-    methods(>= 4.2.0)
+    ggplot2(>= 3.3.6),

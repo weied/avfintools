@@ -22,6 +22,6 @@ Returns a vector of RSI calculations in dataframe format. If current = TRUE, ret
 Returns the average true range, as well as the relative price based on the ATR as a reference
 }
 \examples{
-ATR(tail(SPYdaily, 200), 4)
-ATR(tail(SPYdaily, 200), 4, current = TRUE, mrprice = tail(SPYdaily$close, 1) + 3)
+ATR(SPY15, 14)
+ATR(SPY15, 14, current = TRUE, mrprice = tail(SPYdaily$close, 1) + 2)
 }

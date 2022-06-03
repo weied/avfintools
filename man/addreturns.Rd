@@ -16,5 +16,5 @@ A more detailed dataframe with additiona return metrics and summary statistics.
 Adds percentage returns, interday returns, total returns, cumulative returns, multiplicative returns, range, and dollar returns to the default dataframe pulled from alphavantager
 }
 \examples{
-addreturns(daily_data_from_av)
+addreturns(SPYdaily)
 }

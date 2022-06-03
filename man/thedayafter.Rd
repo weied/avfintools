@@ -2,20 +2,22 @@
 % Please edit documentation in R/avfintools.R
 \name{thedayafter}
 \alias{thedayafter}
-\title{Frequency plot of subsequent returns after a ___ % Change}
+\title{Frequency plot of Subsequent Returns After a Percentage Input}
 \usage{
 thedayafter(dataset, price_input)
 }
 \arguments{
 \item{dataset}{Dataframe with daily data}
 
-\item{price_input}{the price movement, in percent, of the most recent (or whatever you are interested in) trading day}
+\item{price_input}{the price movement, in percent, of the most recent
+(or whatever you are interested in) trading day}
 }
 \value{
 percentage frequency plot of the following day based on historical data
 }
 \description{
-Returns a frequency plot drawn from historical data based on % change that occurred
+Returns a frequency plot drawn from historical data based on a percentage
+change that occurred
 }
 \examples{
 thedayafter(SPYdaily, -1.35)

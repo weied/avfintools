@@ -17,6 +17,4 @@ Returns plot_ly candlestick chart
 }
 \examples{
 candles(SPYdaily)
-candles(SPY60)
-candles(SPYwk)
 }

@@ -16,5 +16,5 @@ A data frame with daily data such as the high, low, open, close, and associated 
 Daily, as in the summary statistics for the daily movement
 }
 \examples{
-getdaily("WTI")
+getdaily("SPY")
 }

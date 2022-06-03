@@ -1,12 +1,41 @@
-library(alphavantager)
-library(tidyverse)
-library(dplyr)
-library(stringr)
-library(lubridate)
-library(plotly)
-library(ggplot2)
+#' @importFrom methods show
+#' @importFrom stats cor filter lm predict quantile sd
+#' @importFrom utils tail timestamp
+#' @importFrom alphavantager av_api_key av_get
+#' @importFrom dplyr between intersect mutate
+#' @importFrom ggplot2 aes element_text geom_hline geom_line ggplot ggtitle theme ylim
+#' @importFrom lubridate hour month hours
+#' @importFrom plotly add_histogram add_trace ggplotly plot_ly layout
+#' @importFrom dplyr "%>%"
+
+
 
 #av_api_key("YOUR_AV_KEY_HERE")
+
+load("data/SPYdaily.RData")
+load("data/SPY15.RData")
+load("data/GMEdaily.RData")
+
+
+#' This is data to be included in my package
+#'
+#' @source Alpha Vantager API
+#' @references \url{https://www.alphavantage.co/documentation/}
+"GMEdaily"
+
+#' This is data to be included in my package
+#'
+#' @source Alpha Vantager API
+#' @references \url{https://www.alphavantage.co/documentation/}
+"SPYdaily"
+
+
+#' This is data to be included in my package
+#'
+#' @source Alpha Vantager API
+#' @references \url{https://www.alphavantage.co/documentation/}
+"SPY15"
+
 
 
 #Get Data from Stocks
@@ -18,12 +47,13 @@ library(ggplot2)
 #' @param ticker The ticker symbol as a string
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' @examples
-#' getdaily("WTI")
+#' getdaily("SPY")
 #' @export
 getdaily <- function (ticker) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_DAILY', outputsize = 'full')
   assign(paste0(ticker, 'daily'), addreturns(retdata), envir = .GlobalEnv)
 }
+
 
 
 #' Get Stock Data at the 15 minute level localized to current time zone
@@ -42,7 +72,7 @@ get15 <- function (ticker, truncated = TRUE) {
   retdata <- addreturns(retdata)
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
-    retdata <- filter(retdata, between(hour(timestamp), 6, 13))
+    retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
     assign(paste0(ticker, '15'), addreturns(retdata), envir = .GlobalEnv)
   } else {
     assign(paste0(ticker, '15'), addreturns(retdata), envir = .GlobalEnv)
@@ -79,7 +109,7 @@ get60 <- function (ticker, truncated = TRUE) {
   retdata <- addreturns(retdata)
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
-    retdata <- filter(retdata, between(hour(timestamp), 7, 13))
+    retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
   } else {a
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
@@ -102,7 +132,7 @@ get5 <- function (ticker, truncated = TRUE) {
   retdata <- addreturns(retdata)
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
-    retdata <- filter(retdata, between(hour(timestamp), 6, 13))
+    retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
     assign(paste0(ticker, '5'), addreturns(retdata), envir = .GlobalEnv)
   } else {
     assign(paste0(ticker, '5'), addreturns(retdata), envir = .GlobalEnv)
@@ -264,11 +294,13 @@ ret_to_cr <- function(list_of_returns) {
   return(blank)
 }
 
-#' Frequency plot of subsequent returns after a ___ % Change
+#' Frequency plot of Subsequent Returns After a Percentage Input
 #'
-#' Returns a frequency plot drawn from historical data based on % change that occurred
+#' Returns a frequency plot drawn from historical data based on a percentage
+#' change that occurred
 #' @param dataset Dataframe with daily data
-#' @param price_input the price movement, in percent, of the most recent (or whatever you are interested in) trading day
+#' @param price_input the price movement, in percent, of the most recent
+#' (or whatever you are interested in) trading day
 #' @return percentage frequency plot of the following day based on historical data
 #' @examples
 #' thedayafter(SPYdaily, -1.35)
@@ -354,7 +386,7 @@ volatility_freq <- function(df, tick_name, cumulative = FALSE) {
 #' @param df Dataframe pulled from alphavantager
 #' @return A more detailed dataframe with additiona return metrics and summary statistics.
 #' @examples
-#' addreturns(daily_data_from_av)
+#' addreturns(SPYdaily)
 #' @export
 addreturns <- function (df) {
   df <- df %>% mutate(returns = 100* (close - open)/(open))
@@ -746,17 +778,14 @@ fibs = function(df, showgraph = TRUE, title = NULL) {
 #' @return A candlestick  chart
 #' @examples
 #' candles(SPYdaily)
-#' candles(SPY60)
-#' candles(SPYwk)
 #' @export
 candles = function(df) { #df name to be typed in string
   fig = plot_ly(df, x = ~timestamp, type="candlestick",
                 open = ~open, close = ~close,
-                high = ~high, low = ~low, name = deparse(substitute(df))) %>% layout(title = "Candlestick Chart",
-                                                                                     xaxis = list(rangeslider = list(visible = F)))
+                high = ~high, low = ~low, name = deparse(substitute(df))) %>% plotly::layout(title = "Candlestick Chart",
+                                                                                             xaxis = list(rangeslider = list(visible = F)))
   return(fig)
 }
-
 
 #' Relative Strength Index
 #'
@@ -874,6 +903,8 @@ genMA = function(df, ma) { #This is a generalized function that allows you to fi
   return(unlist(nl))
 }
 
+
+
 #' Average True Range
 #'
 #' Returns the average true range, as well as the relative price based on the ATR as a reference
@@ -883,8 +914,8 @@ genMA = function(df, ma) { #This is a generalized function that allows you to fi
 #' @param mrprice Most recent price;
 #' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
 #' @examples
-#' ATR(tail(SPYdaily, 200), 4)
-#' ATR(tail(SPYdaily, 200), 4, current = TRUE, mrprice = tail(SPYdaily$close, 1) + 3)
+#' ATR(SPY15, 14)
+#' ATR(SPY15, 14, current = TRUE, mrprice = tail(SPYdaily$close, 1) + 2)
 #' @export
 ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for trading average Day's end RSI is used to calculate the RSI
   atrs = list()
@@ -938,6 +969,6 @@ ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for tra
 #' fastzoom(candles(SPYdaily), "20220202")
 #' @export
 fastzoom = function (plot, x) {
-  zplot = plot %>% layout(xaxis = list( range = c( (as.Date(x, '%Y%m%d')), (as.Date(x, '%Y%m%d') + 1))))
+  zplot = plot %>% plotly::layout(xaxis = list( range = c( (as.Date(x, '%Y%m%d')), (as.Date(x, '%Y%m%d') + 1))))
   return(zplot)
 } # x will be a time element ( ex. 20200202) and it will conform to the closest points on the plot
