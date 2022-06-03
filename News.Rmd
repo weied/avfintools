@@ -1,0 +1,8 @@
+This is the prototype. (Version 0.1.0)
+
+Thank you for downloading this package. Email feedback to: edwwei2020@gmail.com.
+
+Also, I am open to collaborating. you can find the GitHub version of this code @
+https://github.com/weied/avfintools
+
+Have a great day!

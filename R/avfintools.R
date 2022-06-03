@@ -4,9 +4,10 @@
 #' @importFrom alphavantager av_api_key av_get
 #' @importFrom dplyr between intersect mutate
 #' @importFrom ggplot2 aes element_text geom_hline geom_line ggplot ggtitle theme ylim
-#' @importFrom lubridate hour month hours
+#' @importFrom lubridate hour month hours force_tz force_tzs
 #' @importFrom plotly add_histogram add_trace ggplotly plot_ly layout
 #' @importFrom dplyr "%>%"
+#' @importFrom tibble tibble
 
 
 
@@ -39,6 +40,84 @@ load("data/GMEdaily.RData")
 
 
 #Get Data from Stocks
+
+
+#' After-hour and Pre-market Returns
+#'
+#' Show returns between the close of the last trading day and the open of the current trading day
+#' @param df Dataframe with daily data
+#' @return A vector in dataframe format of combined after-hour, overnight, and pre-market returns in percentage
+#' @examples
+#' idret(SPYdaily)
+#' @export
+idret <- function(df){
+  counter <- dim(df)[1]
+  blank <- data.frame(rep(0,dim(df)[1]))
+  i <- 0
+  while (counter != 0)
+  {
+    i = i + 1
+    if(i > 1){
+      l = i - 1
+      blank[i,] = 100 * (df$open[i] - df$close[l])/(df$close[l])
+    }
+    counter = counter - 1
+  }
+  colnames(blank) <- 'idreturns'
+  return(blank)
+}
+
+#' Total return to multiplicative return
+#'
+#' Multiplicative returns are always comparative to the earliest return
+#' @param df Dataframe with daily data
+#' @return A vector in dataframe format cumulative multiplicative returns
+#' @examples
+#' trtomr(SPYdaily)
+#' @export
+trtomr <- function(df) {
+  counter <- dim(df)[1]
+  blank <- data.frame(rep(0,dim(df)[1]))
+  i <- 0
+  st <- 1
+  while (counter != 0)
+  {
+    i = i + 1
+    st = st * (1 + (df$tot_ret[i]/100))
+    blank[i,] = (st - 1) * 100
+    counter = counter - 1
+  }
+  colnames(blank) <- 'mrreturns'
+  return(blank)
+
+}
+
+#' Total return to cumulative return
+#'
+#' The cumulative percentage is the addition of subsequent total daily returns.
+#' @param list_of_returns Vector in dataframe showing returns
+#' @return A vector in dataframe format cumulative percentage returns
+#' @examples
+#' ret_to_cr(SPYdaily$returns)
+#' @export
+ret_to_cr <- function(list_of_returns) {
+  blank <- data.frame(rep(0,length(list_of_returns)))
+  counter = length(list_of_returns)
+  i = 0
+  colnames(blank) <- 'cum_ret'
+  while (counter != 0) {
+    i = i + 1
+    if(i== 1){
+      blank[i,] <- as.numeric(list_of_returns[i])
+    }
+    if(i>1) {
+      l = i - 1
+      blank[i,] <- as.numeric(list_of_returns[i] + blank[l,])
+    }
+    counter = counter - 1
+  }
+  return(blank)
+}
 
 
 #' Get Stock Data at the Daily Level
@@ -217,82 +296,6 @@ compare_returns <- function (a, b, a_name, b_name){
   return(fig2)
 }
 
-#' After-hour and Pre-market Returns
-#'
-#' Show returns between the close of the last trading day and the open of the current trading day
-#' @param df Dataframe with daily data
-#' @return A vector in dataframe format of combined after-hour, overnight, and pre-market returns in percentage
-#' @examples
-#' idret(SPYdaily)
-#' @export
-idret <- function(df){
-  counter <- dim(df)[1]
-  blank <- data.frame(rep(0,dim(df)[1]))
-  i <- 0
-  while (counter != 0)
-  {
-    i = i + 1
-    if(i > 1){
-      l = i - 1
-      blank[i,] = 100 * (df$open[i] - df$close[l])/(df$close[l])
-    }
-    counter = counter - 1
-  }
-  colnames(blank) <- 'idreturns'
-  return(blank)
-}
-
-#' Total return to multiplicative return
-#'
-#' Multiplicative returns are always comparative to the earliest return
-#' @param df Dataframe with daily data
-#' @return A vector in dataframe format cumulative multiplicative returns
-#' @examples
-#' trtomr(SPYdaily)
-#' @export
-trtomr <- function(df) {
-  counter <- dim(df)[1]
-  blank <- data.frame(rep(0,dim(df)[1]))
-  i <- 0
-  st <- 1
-  while (counter != 0)
-  {
-    i = i + 1
-    st = st * (1 + (df$tot_ret[i]/100))
-    blank[i,] = (st - 1) * 100
-    counter = counter - 1
-  }
-  colnames(blank) <- 'mrreturns'
-  return(blank)
-
-}
-
-#' Total return to cumulative return
-#'
-#' The cumulative percentage is the addition of subsequent total daily returns.
-#' @param list_of_returns Vector in dataframe showing returns
-#' @return A vector in dataframe format cumulative percentage returns
-#' @examples
-#' ret_to_cr(SPYdaily$returns)
-#' @export
-ret_to_cr <- function(list_of_returns) {
-  blank <- data.frame(rep(0,length(list_of_returns)))
-  counter = length(list_of_returns)
-  i = 0
-  colnames(blank) <- 'cum_ret'
-  while (counter != 0) {
-    i = i + 1
-    if(i== 1){
-      blank[i,] <- as.numeric(list_of_returns[i])
-    }
-    if(i>1) {
-      l = i - 1
-      blank[i,] <- as.numeric(list_of_returns[i] + blank[l,])
-    }
-    counter = counter - 1
-  }
-  return(blank)
-}
 
 #' Frequency plot of Subsequent Returns After a Percentage Input
 #'
