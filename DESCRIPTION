@@ -6,7 +6,7 @@ Author: Edward Wei
 Maintainer: Edward Wei <edwwei2020@gmail.com>
 Description: Always enter your key using the av_api_key function from 
   alphavantager before using any part of this package. This is a complement to 
-  the alphavantager package from CRAN. Contains commonly used qunatitative 
+  the alphavantager package from CRAN. Contains commonly used quantitative 
   finance tools. Avfintools stands for Alpha Vantager Finance Tools, as 
   it depends on sourcing financial data from the Alpha Vantager API.
 License: CC0
