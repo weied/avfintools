@@ -19,6 +19,8 @@ Default is truncated to show data more relevant to active trading hours. Adjuste
 Summary statistics for the movements on the 5 minute level
 }
 \examples{
+\dontrun{
 get5("WTI")
 get5("SPY", truncated = FALSE)
+}
 }

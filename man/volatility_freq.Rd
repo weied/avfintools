@@ -20,5 +20,6 @@ Frequency plot where you can find intraday volatility (range), maximun upside (U
 a plot_ly plot
 }
 \examples{
-volatilty_freq_cum (SPYdaily, "SPY")
+volatility_freq (SPYdaily, "SPY")
+volatility_freq (SPYdaily, "SPY", cumulative = TRUE)
 }

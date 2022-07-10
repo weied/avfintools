@@ -126,7 +126,9 @@ ret_to_cr <- function(list_of_returns) {
 #' @param ticker The ticker symbol as a string
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' @examples
+#' \dontrun{
 #' getdaily("SPY")
+#' }
 #' @export
 getdaily <- function (ticker) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_DAILY', outputsize = 'full')
@@ -143,8 +145,10 @@ getdaily <- function (ticker) {
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' Default is truncated to show data more relevant to active trading hours. Adjusted to local time zone.
 #' @examples
+#' \dontrun{
 #' get15("WTI")
 #' get15("SPY", truncated = FALSE)
+#' }
 #' @export
 get15 <- function (ticker, truncated = TRUE) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_INTRADAY', outputsize = 'full', interval = '15min')
@@ -165,7 +169,9 @@ get15 <- function (ticker, truncated = TRUE) {
 #' @param ticker The ticker symbol as a string
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' @examples
+#' \dontrun{
 #' getweekly("WTI")
+#' }
 getweekly <- function(ticker){
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_Weekly')
   retdata <- addreturns(retdata)
@@ -180,8 +186,10 @@ getweekly <- function(ticker){
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' Default is truncated to show data more relevant to active trading hours. Adjusted to local time zone.
 #' @examples
+#' \dontrun{
 #' get60("WTI")
 #' get60("SPY", truncated = FALSE)
+#' }
 #' @export
 get60 <- function (ticker, truncated = TRUE) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_INTRADAY', outputsize = 'full', interval = '60min')
@@ -190,7 +198,7 @@ get60 <- function (ticker, truncated = TRUE) {
   if (truncated == TRUE) {
     retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
-  } else {a
+  } else {
     assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
   }
 }
@@ -203,8 +211,10 @@ get60 <- function (ticker, truncated = TRUE) {
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' Default is truncated to show data more relevant to active trading hours. Adjusted to local time zone.
 #' @examples
+#' \dontrun{
 #' get5("WTI")
 #' get5("SPY", truncated = FALSE)
+#' }
 #' @export
 get5 <- function (ticker, truncated = TRUE) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_INTRADAY', outputsize = 'full', interval = '5min')
@@ -230,7 +240,9 @@ get5 <- function (ticker, truncated = TRUE) {
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' Adjusted to local time zone.
 #' @examples
+#' \dontrun{
 #' crypto60("BTC")
+#' }
 #' @export
 crypto60 <- function(coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = "CRYPTO_INTRADAY", interval = "60min", outputsize = "full", market = "USD")
@@ -245,7 +257,9 @@ crypto60 <- function(coin_name) {
 #' @param coin_name The ticker symbol for the concurrency as a string
 #' @return A data frame with daily data such as the high, low, open, close, and associated returns. Available in the global environment.
 #' @examples
+#' \dontrun{
 #' cryptodaily("WTI")
+#' }
 #' @export
 cryptodaily <- function (coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = 'DIGITAL_CURRENCY_DAILY', market = 'USD')
@@ -331,23 +345,7 @@ thedayafter <- function(dataset, price_input){
   plot_ly(ndf, type = 'histogram', x=~returns, histnorm = 'probability', name = 'Trading Day') %>% add_histogram(x = ~idreturns, name = "AH + PM") %>% layout(title = paste('One Day Returns after', as.character(price_input), '% change'))
 }
 
-#' Cumulative Frequency plot of Range, as well as maximun Upward and Downward Movement
-#'
-#' a plot_ly plot
-#' @param df Dataframe with daily data
-#' @param tick_name The ticker so the graph is correct
-#' @return Cumulative frequency plot where you can find intraday volatility (range), maximun upside (Upward Movement), maximun downside (Downward Movement) on a cumulative percentile basis
-#' @examples
-#' volatilty_freq(SPYdaily, "SPY")
-#' @export
-volatilty_freq_cum <- function(df, tick_name) {
 
-  df <- df %>% dplyr::mutate(hilow = high - low)
-  df <- df %>% dplyr::mutate(hilowp = hilow/open * 100)
-  df <- df %>% dplyr::mutate(openhi = (high - open)/open * 100)
-  df <- df %>% dplyr::mutate(openlow = (low - open)/open * 100 * -1)
-
-}
 
 #' Frequency plot of Range, as well as maximum Upward and Downward Movement
 #'
@@ -357,11 +355,14 @@ volatilty_freq_cum <- function(df, tick_name) {
 #' @param cumulative Default is FALSE, turn to TRUE for a cumulative plot.
 #' @return Frequency plot where you can find intraday volatility (range), maximun upside (Upward Movement), maximun downside (Downward Movement) on a cumulative percentile basis
 #' @examples
-#' volatilty_freq_cum (SPYdaily, "SPY")
+#' volatility_freq (SPYdaily, "SPY")
+#' volatility_freq (SPYdaily, "SPY", cumulative = TRUE)
 #' @export
 
 volatility_freq <- function(df, tick_name, cumulative = FALSE) {
-
+  high <- NULL
+  low <- NULL
+  hilow <- NULL
   df <- df %>% dplyr::mutate(hilow = high - low)
   df <- df %>% dplyr::mutate(hilowp = hilow/open * 100)
   df <- df %>% dplyr::mutate(openhi = (high - open)/open * 100)
@@ -392,6 +393,11 @@ volatility_freq <- function(df, tick_name, cumulative = FALSE) {
 #' addreturns(SPYdaily)
 #' @export
 addreturns <- function (df) {
+  returns <- NULL
+  idreturns <- NULL
+  tot_ret <- NULL
+  high <- NULL
+  low <- NULL
   df <- df %>% mutate(returns = 100* (close - open)/(open))
   df <- df %>% dplyr::mutate(idret(df))
   df <- df %>% dplyr::mutate(tot_ret = returns + idreturns)
@@ -410,10 +416,11 @@ addreturns <- function (df) {
 #' @return What comes out of this function
 #' @examples
 #'
-#' project(tail(SPYdaily,200), "SPY")
-#' project(SPY15, "SPY")
+#' project_price(tail(SPYdaily,200), "SPY")
+#' project_price(SPY15, "SPY")
 #' @export
 project_price <- function(df, tickername) {
+  hs <- NULL
   df <- df %>% mutate(hs =  as.numeric(timestamp - df$timestamp[1], units = 'hours')) %>%
     mutate(hs2 = hs^2) %>%
     mutate(hs3 = hs^3)
@@ -666,7 +673,7 @@ streak = function (df) { # streak will return a positive or negative number that
 #' @param var String of column name you wish to see streak in
 #' @return Returns a 1 x # of columns in df dataframe
 #' @examples
-#' streak2(tail(SPYdaily,200), "tot_ret")
+#' streak_var(tail(SPYdaily,200), "tot_ret")
 #' @export
 streak_var = function (df, var) { #streak2 lets you choose which variable to count the streak of
   counter <- dim(df)[1]

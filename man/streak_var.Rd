@@ -19,5 +19,5 @@ Counts the number of days the open price has moved consecutively
 Negative and positive streaks are represented by their sign; only works with various types of returns or mutated vector created by diff()
 }
 \examples{
-streak2(tail(SPYdaily,200), "tot_ret")
+streak_var(tail(SPYdaily,200), "tot_ret")
 }

@@ -17,5 +17,7 @@ Adjusted to local time zone.
 Summary statistics for the movements on the hourly level
 }
 \examples{
+\dontrun{
 crypto60("BTC")
+}
 }

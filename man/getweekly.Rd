@@ -16,5 +16,7 @@ A data frame with daily data such as the high, low, open, close, and associated 
 Summary statistics for the stock movements on the weekly
 }
 \examples{
+\dontrun{
 getweekly("WTI")
+}
 }

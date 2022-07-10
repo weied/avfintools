@@ -19,6 +19,6 @@ Works with multiple time intervals. Do not oversupply with data, regression is e
 }
 \examples{
 
-project(tail(SPYdaily,200), "SPY")
-project(SPY15, "SPY")
+project_price(tail(SPYdaily,200), "SPY")
+project_price(SPY15, "SPY")
 }

@@ -1,27 +1,7 @@
 ## R CMD check results
-There was 1 ERROR:
 
-Error: Set API key using av_api_key(). If you do not have an API key, please claim your free API key on (https://www.alphavantage.co/support/#api-key).
+0 Errors, 0 Warnings, 1 Note
 
-
-There was 1 NOTE:
-
-  addreturns: no visible binding for global variable 'returns'
-  addreturns: no visible binding for global variable 'idreturns'
-  addreturns: no visible binding for global variable 'tot_ret'
-  addreturns: no visible binding for global variable 'high'
-  addreturns: no visible binding for global variable 'low'
-  get60: no visible binding for global variable 'a'
-  project_price: no visible binding for global variable 'hs'
-  volatility_freq: no visible binding for global variable 'high'
-  volatility_freq: no visible binding for global variable 'low'
-  volatility_freq: no visible binding for global variable 'hilow'
-  volatilty_freq_cum: no visible binding for global variable 'high'
-  volatilty_freq_cum: no visible binding for global variable 'low'
-  volatilty_freq_cum: no visible binding for global variable 'hilow'
-  Undefined global functions or variables:
-    a high hilow hs idreturns low returns tot_ret
-  
   Found the following assignments to the global environment:
   File 'avfintools/R/avfintools.R':
     assign(paste0(ticker, "daily"), addreturns(retdata), envir = .GlobalEnv)
@@ -34,7 +14,8 @@ There was 1 NOTE:
     assign(paste0(ticker, "5"), addreturns(retdata), envir = .GlobalEnv)
     assign(paste0(coin_name, "60"), addreturns(retdata), envir = .GlobalEnv)
     assign(paste0(coin_name, "daily"), retdata, envir = .GlobalEnv)
-
+    
+    
 ## Downstream dependencies
 Downstream dependencies was not checked because current R version not compatible
 with package. 
