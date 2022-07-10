@@ -353,7 +353,7 @@ thedayafter <- function(dataset, price_input){
 #' @param df Dataframe with daily data
 #' @param tick_name The ticker so the graph is correct
 #' @param cumulative Default is FALSE, turn to TRUE for a cumulative plot.
-#' @return Frequency plot where you can find intraday volatility (range), maximun upside (Upward Movement), maximun downside (Downward Movement) on a cumulative percentile basis
+#' @return Frequency plot where you can find intraday volatility (range), maximum upside (Upward Movement), maximum downside (Downward Movement) on a cumulative percentile basis
 #' @examples
 #' volatility_freq (SPYdaily, "SPY")
 #' volatility_freq (SPYdaily, "SPY", cumulative = TRUE)
@@ -388,7 +388,7 @@ volatility_freq <- function(df, tick_name, cumulative = FALSE) {
 #'
 #' Adds percentage returns, interday returns, total returns, cumulative returns, multiplicative returns, range, and dollar returns to the default dataframe pulled from alphavantager
 #' @param df Dataframe pulled from alphavantager
-#' @return A more detailed dataframe with additiona return metrics and summary statistics.
+#' @return A more detailed dataframe with additional return metrics and summary statistics.
 #' @examples
 #' addreturns(SPYdaily)
 #' @export
@@ -589,9 +589,9 @@ pvi <- function(df) {
   return(blank * df$open[1])
 }
 
-#' Relative percentage from the Maximun Value
+#' Relative percentage from the Maximum Value
 #'
-#' Returns the percent of the maximum volume movemen from datat
+#' Returns the percent of the maximum volume movement from data
 #' @param df Dataframe with price data.
 #' @return Returns a 1 x # of columns in df dataframe in percentage
 #' @examples
@@ -888,7 +888,7 @@ RSI = function(df, periods, current = FALSE, pricechange = NULL) {
 #' @param df Dataframe with price data
 #' @param ma # of periods for the moving average to calculate
 #' @return a vector with the same number of columns as df showing the moving averages. Periods before moving
-#' average should be not considered for use. Output is kept same columns for compatability.
+#' average should be not considered for use. Output is kept same columns for compatibility.
 #' @examples
 #' SPYDMA200 <- genMA(SPYdaily, 14)
 #' @export
