@@ -13,7 +13,7 @@ genMA(df, ma)
 }
 \value{
 a vector with the same number of columns as df showing the moving averages. Periods before moving
-average should be not considered for use. Output is kept same columns for compatability.
+average should be not considered for use. Output is kept same columns for compatibility.
 }
 \description{
 Description

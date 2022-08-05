@@ -2,7 +2,7 @@
 % Please edit documentation in R/avfintools.R
 \name{volp}
 \alias{volp}
-\title{Relative percentage from the Maximun Value}
+\title{Relative percentage from the Maximum Value}
 \usage{
 volp(df)
 }
@@ -13,7 +13,7 @@ volp(df)
 Returns a 1 x # of columns in df dataframe in percentage
 }
 \description{
-Returns the percent of the maximum volume movemen from datat
+Returns the percent of the maximum volume movement from data
 }
 \examples{
 volp(tail(SPYdaily, 200))

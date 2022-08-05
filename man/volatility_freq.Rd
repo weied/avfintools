@@ -14,7 +14,7 @@ volatility_freq(df, tick_name, cumulative = FALSE)
 \item{cumulative}{Default is FALSE, turn to TRUE for a cumulative plot.}
 }
 \value{
-Frequency plot where you can find intraday volatility (range), maximun upside (Upward Movement), maximun downside (Downward Movement) on a cumulative percentile basis
+Frequency plot where you can find intraday volatility (range), maximum upside (Upward Movement), maximum downside (Downward Movement) on a cumulative percentile basis
 }
 \description{
 a plot_ly plot

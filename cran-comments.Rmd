@@ -1,21 +1,7 @@
 ## R CMD check results
 
-0 Errors, 0 Warnings, 1 Note
+0 Errors, 0 Warnings, 0 Notes
 
-  Found the following assignments to the global environment:
-  File 'avfintools/R/avfintools.R':
-    assign(paste0(ticker, "daily"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "15"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "15"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "wk"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "60"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "60"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "5"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(ticker, "5"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(coin_name, "60"), addreturns(retdata), envir = .GlobalEnv)
-    assign(paste0(coin_name, "daily"), retdata, envir = .GlobalEnv)
-    
-    
 ## Downstream dependencies
 Downstream dependencies was not checked because current R version not compatible
 with package. 

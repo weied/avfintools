@@ -10,7 +10,7 @@ addreturns(df)
 \item{df}{Dataframe pulled from alphavantager}
 }
 \value{
-A more detailed dataframe with additiona return metrics and summary statistics.
+A more detailed dataframe with additional return metrics and summary statistics.
 }
 \description{
 Adds percentage returns, interday returns, total returns, cumulative returns, multiplicative returns, range, and dollar returns to the default dataframe pulled from alphavantager

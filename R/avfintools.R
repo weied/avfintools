@@ -132,7 +132,7 @@ ret_to_cr <- function(list_of_returns) {
 #' @export
 getdaily <- function (ticker) {
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_DAILY', outputsize = 'full')
-  assign(paste0(ticker, 'daily'), addreturns(retdata), envir = .GlobalEnv)
+  return(addreturns(retdata))
 }
 
 
@@ -156,9 +156,9 @@ get15 <- function (ticker, truncated = TRUE) {
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
     retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
-    assign(paste0(ticker, '15'), addreturns(retdata), envir = .GlobalEnv)
+    return(addreturns(retdata))
   } else {
-    assign(paste0(ticker, '15'), addreturns(retdata), envir = .GlobalEnv)
+    return(addreturns(retdata))
   }
 
 }
@@ -175,7 +175,7 @@ get15 <- function (ticker, truncated = TRUE) {
 getweekly <- function(ticker){
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_Weekly')
   retdata <- addreturns(retdata)
-  assign(paste0(ticker, 'wk'), addreturns(retdata), envir = .GlobalEnv)
+  return(addreturns(retdata))
 }
 
 #' Get Stock Data at the hourly level localized to current time zone
@@ -197,9 +197,9 @@ get60 <- function (ticker, truncated = TRUE) {
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
     retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
-    assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
+    return(addreturns(retdata))
   } else {
-    assign(paste0(ticker, '60'), addreturns(retdata), envir = .GlobalEnv)
+    return(addreturns(retdata))
   }
 }
 
@@ -222,9 +222,9 @@ get5 <- function (ticker, truncated = TRUE) {
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
   if (truncated == TRUE) {
     retdata <- retdata[between(hour(retdata$timestamp), 6, 13),]
-    assign(paste0(ticker, '5'), addreturns(retdata), envir = .GlobalEnv)
+    return(addreturns(retdata))
   } else {
-    assign(paste0(ticker, '5'), addreturns(retdata), envir = .GlobalEnv)
+    return(addreturns(retdata))
   }
 }
 
@@ -248,7 +248,7 @@ crypto60 <- function(coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = "CRYPTO_INTRADAY", interval = "60min", outputsize = "full", market = "USD")
   retdata <- addreturns(retdata)
   retdata <- retdata %>% dplyr::mutate(timestamp = force_tzs(timestamp, tzones = c("America/New_York"), tzone_out = Sys.timezone()))
-  assign(paste0(coin_name, '60'), addreturns(retdata), envir = .GlobalEnv)
+  return(addreturns(retdata))
 }
 
 #' Get Cryptocurrency Data at the Daily Level
@@ -263,7 +263,7 @@ crypto60 <- function(coin_name) {
 #' @export
 cryptodaily <- function (coin_name) {
   retdata <- av_get(symbol = coin_name, av_fun = 'DIGITAL_CURRENCY_DAILY', market = 'USD')
-  assign(paste0(coin_name, 'daily'), retdata, envir = .GlobalEnv)
+  return(addreturns(retdata))
 }
 
 
