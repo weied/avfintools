@@ -172,6 +172,7 @@ get15 <- function (ticker, truncated = TRUE) {
 #' \dontrun{
 #' getweekly("WTI")
 #' }
+#' @export
 getweekly <- function(ticker){
   retdata <- av_get(symbol = ticker, av_fun = 'TIME_SERIES_Weekly')
   retdata <- addreturns(retdata)
