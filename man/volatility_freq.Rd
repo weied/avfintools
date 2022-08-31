@@ -4,7 +4,7 @@
 \alias{volatility_freq}
 \title{Frequency plot of Range, as well as maximum Upward and Downward Movement}
 \usage{
-volatility_freq(df, tick_name, cumulative = FALSE)
+volatility_freq(df, tick_name, cumulative = FALSE, hideprints = FALSE)
 }
 \arguments{
 \item{df}{Dataframe with daily data}
@@ -12,6 +12,8 @@ volatility_freq(df, tick_name, cumulative = FALSE)
 \item{tick_name}{The ticker so the graph is correct}
 
 \item{cumulative}{Default is FALSE, turn to TRUE for a cumulative plot.}
+
+\item{hideprints}{if set to FALSE, shows summary statistics}
 }
 \value{
 Frequency plot where you can find intraday volatility (range), maximum upside (Upward Movement), maximum downside (Downward Movement) on a cumulative percentile basis
@@ -22,4 +24,5 @@ a plot_ly plot
 \examples{
 volatility_freq (SPYdaily, "SPY")
 volatility_freq (SPYdaily, "SPY", cumulative = TRUE)
+volatility_freq (SPYdaily, "SPY", hideprints = TRUE)
 }

@@ -4,7 +4,7 @@
 \alias{fibs}
 \title{Show Fibonacci bands}
 \usage{
-fibs(df, showgraph = TRUE, title = NULL)
+fibs(df, showgraph = TRUE, title = NULL, hideprints = FALSE)
 }
 \arguments{
 \item{df}{Dataframe with price data, works with various intervals}
@@ -12,6 +12,8 @@ fibs(df, showgraph = TRUE, title = NULL)
 \item{showgraph}{Whether or not you want the function to pop out the visual}
 
 \item{title}{A character string for the Title of your graph}
+
+\item{hideprints}{if set to FALSE, prints out the support and resistance levels}
 }
 \value{
 Returns graph with various levels as well as a vector

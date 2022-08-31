@@ -307,7 +307,6 @@ compare_returns <- function (a, b, a_name, b_name){
     add_trace(y = ~tot_ret.y, x = ~timestamp, name = paste(b_name, 'Returns'), fill ='none')
 
   fig2 <- fig2 %>% layout(title = paste(a_name, "vs.", b_name, "Returns"), xaxis = x1, yaxis = y1)
-  print(paste(a_name, "vs.", b_name, "Returns"))
   return(fig2)
 }
 
@@ -319,11 +318,12 @@ compare_returns <- function (a, b, a_name, b_name){
 #' @param dataset Dataframe with daily data
 #' @param price_input the price movement, in percent, of the most recent
 #' (or whatever you are interested in) trading day
+#' @param hideprints if set to FALSE, returns summary statistics
 #' @return percentage frequency plot of the following day based on historical data
 #' @examples
 #' thedayafter(SPYdaily, -1.35)
 #' @export
-thedayafter <- function(dataset, price_input){
+thedayafter <- function(dataset, price_input, hideprints = TRUE){
   stdev <- sd(dataset$returns)
   meme <- mean(dataset$returns)
   nstd <- (price_input - meme)/stdev
@@ -335,16 +335,19 @@ thedayafter <- function(dataset, price_input){
   dind <- intersect(which(dataset$returns> lb),which(dataset$returns< ub)) + 1
   ndind <- intersect(dfil, dind)
   ndf<- tibble(dataset$returns[ndind], dataset$idreturns[ndind])
-  print(summary(ndf))
-  print(ndf)
   colnames(ndf) <- c('returns','idreturns')
+  if(hideprints == FALSE)
+  {
+  print(summary(ndf))
   print(paste("Mean Return:", as.character(mean(ndf$returns))))
   print((paste("Mean AH/PM Return:", as.character(mean(ndf$idreturns)))))
   print((paste("Mean Total Next Day Return:", as.character((mean(ndf$idreturns)+mean(ndf$returns))))))
   print(paste(as.character(round((sum(ndf$returns>0)/length(ndf$returns)) * 100, 2)), " % of the time, next trading day returns are positive"))
   print(paste(as.character(round((sum(ndf$idreturns>0)/length(ndf$idreturns)) * 100, 2)), " % of the time, after-hours of this day/ pre-market of next day are  positive"))
-  plot_ly(ndf, type = 'histogram', x=~returns, histnorm = 'probability', name = 'Trading Day') %>% add_histogram(x = ~idreturns, name = "AH + PM") %>% layout(title = paste('One Day Returns after', as.character(price_input), '% change'))
-}
+  }
+  tda_fig = plot_ly(ndf, type = 'histogram', x=~returns, histnorm = 'probability', name = 'Trading Day') %>% add_histogram(x = ~idreturns, name = "AH + PM") %>% layout(title = paste('One Day Returns after', as.character(price_input), '% change'))
+  return(tda_fig)
+  }
 
 
 
@@ -354,13 +357,14 @@ thedayafter <- function(dataset, price_input){
 #' @param df Dataframe with daily data
 #' @param tick_name The ticker so the graph is correct
 #' @param cumulative Default is FALSE, turn to TRUE for a cumulative plot.
+#' @param hideprints if set to FALSE, shows summary statistics
 #' @return Frequency plot where you can find intraday volatility (range), maximum upside (Upward Movement), maximum downside (Downward Movement) on a cumulative percentile basis
 #' @examples
 #' volatility_freq (SPYdaily, "SPY")
 #' volatility_freq (SPYdaily, "SPY", cumulative = TRUE)
+#' volatility_freq (SPYdaily, "SPY", hideprints = TRUE)
 #' @export
-
-volatility_freq <- function(df, tick_name, cumulative = FALSE) {
+volatility_freq <- function(df, tick_name, cumulative = FALSE, hideprints = FALSE) {
   high <- NULL
   low <- NULL
   hilow <- NULL
@@ -368,10 +372,13 @@ volatility_freq <- function(df, tick_name, cumulative = FALSE) {
   df <- df %>% dplyr::mutate(hilowp = hilow/open * 100)
   df <- df %>% dplyr::mutate(openhi = (high - open)/open * 100)
   df <- df %>% dplyr::mutate(openlow = (low - open)/open * 100)
+
+  if(hideprints == FALSE) {
   print(summary(df$hilowp))
   print(summary(df$openhi))
   print(summary(df$openlow))
   print(paste(tick_name, 'goes up',as.character((100 *sum(df$returns > 0))/dim(df)[1]), '% of the time from market open to close'))
+  }
 
   if(cumulative == TRUE) {
     df <- df %>% dplyr::mutate(openlow = (low - open)/open * 100 * -1)
@@ -716,13 +723,14 @@ streak_var = function (df, var) { #streak2 lets you choose which variable to cou
 #' @param df Dataframe with price data, works with various intervals
 #' @param showgraph Whether or not you want the function to pop out the visual
 #' @param title A character string for the Title of your graph
+#' @param hideprints if set to FALSE, prints out the support and resistance levels
 #' @return Returns graph with various levels as well as a vector
 #' @examples
 #' fibs(tail(SPYdaily, 200))
 #' SPYdailyfibs <- fibs(tail(SPYdaily, 200))
 #' fibs(SPY15)
 #' @export
-fibs = function(df, showgraph = TRUE, title = NULL) {
+fibs = function(df, showgraph = TRUE, title = NULL, hideprints = FALSE) {
   fib = c(.03, .05, .08, .13, .21, .34)
   l = length(fib)
   m = 1
@@ -753,11 +761,14 @@ fibs = function(df, showgraph = TRUE, title = NULL) {
   linesh = round((lines + 0.15)*10)/10
   len = length(lines)
 
+  if (hideprints == FALSE) {
   print('These are the ranges where a reversion may happen')
+
   counter = 1
   while(counter < len) {
     print(paste(as.character(linesl[counter]), 'to', as.character(linesh[counter])))
     counter = counter + 1
+  }
   }
 
 
@@ -769,7 +780,9 @@ fibs = function(df, showgraph = TRUE, title = NULL) {
 
     fig = ggplotly(fig + geom_hline(yintercept = lines))
 
+    if (hideprints == FALSE) {
     print('These are the potential prices for resistance and support')
+    }
     show(fig)
 
     return(lines)

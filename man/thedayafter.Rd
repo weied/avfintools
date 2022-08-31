@@ -4,13 +4,15 @@
 \alias{thedayafter}
 \title{Frequency plot of Subsequent Returns After a Percentage Input}
 \usage{
-thedayafter(dataset, price_input)
+thedayafter(dataset, price_input, hideprints = TRUE)
 }
 \arguments{
 \item{dataset}{Dataframe with daily data}
 
 \item{price_input}{the price movement, in percent, of the most recent
 (or whatever you are interested in) trading day}
+
+\item{hideprints}{if set to FALSE, returns summary statistics}
 }
 \value{
 percentage frequency plot of the following day based on historical data
