@@ -4,7 +4,7 @@
 \alias{RSI}
 \title{Relative Strength Index}
 \usage{
-RSI(df, periods, current = FALSE, pricechange = NULL)
+RSI(df, periods, current = FALSE, pricechange = NULL, hideprints = TRUE)
 }
 \arguments{
 \item{df}{Dataframe with price data}

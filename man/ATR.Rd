@@ -4,22 +4,22 @@
 \alias{ATR}
 \title{Average True Range}
 \usage{
-ATR(df, period, current = FALSE, mrprice = NULL)
+ATR(df, period, current = FALSE, mrprice = NULL, hideprints = TRUE)
 }
 \arguments{
 \item{df}{Dataframe with price data.}
 
-\item{period}{Calculation period}
+\item{period}{Calculation period in day for the true range}
 
 \item{current}{If one wants to input the latest price point before data update}
 
 \item{mrprice}{Most recent price;}
 }
 \value{
-Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
+Returns a vector of ATR calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
 }
 \description{
-Returns the average true range, as well as the relative price based on the ATR as a reference
+Returns the average true range as well as the relative price based on the ATR as a reference
 }
 \examples{
 ATR(SPY15, 14)
