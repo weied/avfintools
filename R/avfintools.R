@@ -823,7 +823,7 @@ candles = function(df) { #df name to be typed in string
 #' RSI(SPY15, 14)
 #' RSI(tail(SPYdaily,200), 14, current = TRUE, pricechange = 1.3)
 #' @export
-RSI = function(df, periods, current = FALSE, pricechange = NULL) {
+RSI = function(df, periods, current = FALSE, pricechange = NULL, hideprints = TRUE) {
   rets = df$tot_ret
   rs1 = c()
   poslist = c()
@@ -889,10 +889,12 @@ RSI = function(df, periods, current = FALSE, pricechange = NULL) {
     else {
       rscurrent = 100 - (100/(1+((tail(avggainl, 1) * (periods - 1))+0)/(tail(avglossl, 1) * (periods - 1)+0)))
     }
+    if (hideprints == FALSE) {
     print(paste("The current RSI using changes on the day so far is", as.character(rscurrent)))
+    }
   }
 
-  return(rs2)
+  invisible(rs2)
 
 }
 
@@ -931,17 +933,17 @@ genMA = function(df, ma) { #This is a generalized function that allows you to fi
 
 #' Average True Range
 #'
-#' Returns the average true range, as well as the relative price based on the ATR as a reference
+#' Returns the average true range as well as the relative price based on the ATR as a reference
 #' @param df Dataframe with price data.
-#' @param period Calculation period
+#' @param period Calculation period in day for the true range
 #' @param current If one wants to input the latest price point before data update
 #' @param mrprice Most recent price;
-#' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
+#' @return Returns a vector of ATR calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
 #' @examples
 #' ATR(SPY15, 14)
 #' ATR(SPY15, 14, current = TRUE, mrprice = tail(SPYdaily$close, 1) + 2)
 #' @export
-ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for trading average Day's end RSI is used to calculate the RSI
+ATR = function(df, period, current = FALSE, mrprice = NULL, hideprints = TRUE) {
   atrs = list()
   highs = df$high
   lows = df$low
@@ -973,14 +975,16 @@ ATR = function(df, period, current = FALSE, mrprice = NULL) { #days used for tra
   }
 
   if(current == TRUE){
-    print(paste("In the past", as.character(period), "days the low is", as.character(mincur), "while the high is", as.character(maxcur)))
     rng = maxcur - mincur
     percentile = ((mrprice - mincur)/rng) * 100
+    if (hideprints == FALSE) {
+    print(paste("In the past", as.character(period), "days the low is", as.character(mincur), "while the high is", as.character(maxcur)))
     print(paste0(as.character(mrprice), " is ", as.character(percentile), "th percentile of the above range" ))
-    return()
+    }
+    return(percentile)
 
   }
-  return(unlist(atrs))
+  invisible(unlist(atrs))
 }
 
 #' Fast Zoom
