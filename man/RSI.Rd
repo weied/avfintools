@@ -14,6 +14,8 @@ RSI(df, periods, current = FALSE, pricechange = NULL, hideprints = TRUE)
 \item{current}{If one wants to input the latest price point before data updates, RSI uses the percentage return at the end of the market hours}
 
 \item{pricechange}{Input in percentage}
+
+\item{hideprints}{If true, hides printouts from the current message}
 }
 \value{
 Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent RSI.

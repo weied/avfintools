@@ -9,7 +9,7 @@ showidreturns(df, name_in_string)
 \arguments{
 \item{df}{Dataframe from the "get"}
 
-\item{name_in_string}{Name of security associated with dtaframe}
+\item{name_in_string}{Name of security associated with dataframe}
 }
 \value{
 A plot_ly graph showing the frequency of absolute returns.

@@ -277,7 +277,7 @@ cryptodaily <- function (coin_name) {
 #' @param b The second dataframe filled with data from the function getdaily()
 #' @param a_name Character string name for first dataframe
 #' @param b_name Character string name for second dataframe
-#' @return Returns plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns. Click graph name to un/toggle for better visibility.
+#' @return Returns plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns. Click graph name to un-toggle for better visibility.
 #' @examples
 #' compare_returns(GMEdaily, SPYdaily, "GME", "SPY")
 #' @export
@@ -476,7 +476,7 @@ findcor<- function (a, b, sdata) {
 #'
 #' Shows the cumulative probabilities of each percentage movement
 #' @param df Dataframe from the "get"
-#' @param name_in_string Name of security associated with dtaframe
+#' @param name_in_string Name of security associated with dataframe
 #' @return A plot_ly graph showing the frequency of absolute returns.
 #' "All Data" - no data omitted
 #' "Cumulative Probability" Cumulative frequency graph of returns
@@ -818,6 +818,7 @@ candles = function(df) { #df name to be typed in string
 #' @param periods Calculation Period
 #' @param current If one wants to input the latest price point before data updates, RSI uses the percentage return at the end of the market hours
 #' @param pricechange Input in percentage
+#' @param hideprints If true, hides printouts from the current message
 #' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent RSI.
 #' @examples
 #' RSI(SPY15, 14)
@@ -938,6 +939,7 @@ genMA = function(df, ma) { #This is a generalized function that allows you to fi
 #' @param period Calculation period in day for the true range
 #' @param current If one wants to input the latest price point before data update
 #' @param mrprice Most recent price;
+#' @param hideprints if TRUE hides the print outs regarding the percentile within an ATR
 #' @return Returns a vector of ATR calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR
 #' @examples
 #' ATR(SPY15, 14)

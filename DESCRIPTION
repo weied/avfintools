@@ -2,7 +2,8 @@ Package: avfintools
 Type: Package
 Title: Financial Analysis Tools Using Data from 'Alpha Vantager'
 Version: 0.1.0
-Author@R: 
+Author:
+  Author@R
   person("Edward Wei", "Develepor", role = c("aut", "cre", "cph"))
 Maintainer: Edward Wei <edwwei2020@gmail.com>
 Description: To pull data from 'ALPHA VANTAGE' <https://www.alphavantage.co/>, 
@@ -11,6 +12,7 @@ Description: To pull data from 'ALPHA VANTAGE' <https://www.alphavantage.co/>,
   commonly used quantitative finance tools. 'avfintools' stands for 
   'ALPHA VANTAGE' Finance Tools, as it depends on sourcing financial data from 
   the 'ALPHA VANTAGE' <https://www.alphavantage.co/documentation/> API.
+Language: en-US
 License: CC0
 Encoding: UTF-8
 LazyData: true

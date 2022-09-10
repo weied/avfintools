@@ -14,6 +14,8 @@ ATR(df, period, current = FALSE, mrprice = NULL, hideprints = TRUE)
 \item{current}{If one wants to input the latest price point before data update}
 
 \item{mrprice}{Most recent price;}
+
+\item{hideprints}{if TRUE hides the print outs regarding the percentile within an ATR}
 }
 \value{
 Returns a vector of ATR calculations in dataframe format. If current = TRUE, returns the most recent ATR as well as where price is in the context of the ATR

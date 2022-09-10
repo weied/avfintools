@@ -16,7 +16,7 @@ compare_returns(a, b, a_name, b_name)
 \item{b_name}{Character string name for second dataframe}
 }
 \value{
-Returns plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns. Click graph name to un/toggle for better visibility.
+Returns plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns. Click graph name to un-toggle for better visibility.
 }
 \description{
 Prints a plotly graph comparing returns, cumulative nominal returns, and cumulative multiplicative returns
