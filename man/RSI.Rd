@@ -15,7 +15,7 @@ RSI(df, periods, current = FALSE, pricechange = NULL, hideprints = TRUE)
 
 \item{pricechange}{Input in percentage}
 
-\item{hideprints}{If true, hides printouts from the current message}
+\item{hideprints}{If TRUE, hides printouts from the current message}
 }
 \value{
 Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent RSI.

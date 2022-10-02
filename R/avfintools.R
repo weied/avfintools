@@ -9,7 +9,9 @@
 #' @importFrom dplyr "%>%"
 #' @importFrom tibble tibble
 
-
+#For LaTek to work run in console:
+#Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Users/edmon/AppData/Local/Programs/MiKTeX/miktex/bin/x64", sep=.Platform$path.sep))
+# R CMD Rd2pdf avfintools
 
 #av_api_key("YOUR_AV_KEY_HERE")
 
@@ -818,7 +820,7 @@ candles = function(df) { #df name to be typed in string
 #' @param periods Calculation Period
 #' @param current If one wants to input the latest price point before data updates, RSI uses the percentage return at the end of the market hours
 #' @param pricechange Input in percentage
-#' @param hideprints If true, hides printouts from the current message
+#' @param hideprints If TRUE, hides printouts from the current message
 #' @return Returns a vector of RSI calculations in dataframe format. If current = TRUE, returns the most recent RSI.
 #' @examples
 #' RSI(SPY15, 14)
@@ -895,7 +897,7 @@ RSI = function(df, periods, current = FALSE, pricechange = NULL, hideprints = TR
     }
   }
 
-  invisible(rs2)
+  return(invisible(rs2))
 
 }
 
@@ -986,7 +988,7 @@ ATR = function(df, period, current = FALSE, mrprice = NULL, hideprints = TRUE) {
     return(percentile)
 
   }
-  invisible(unlist(atrs))
+  return(invisible(unlist(atrs)))
 }
 
 #' Fast Zoom
