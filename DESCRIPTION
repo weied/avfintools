@@ -2,8 +2,7 @@ Package: avfintools
 Type: Package
 Title: Financial Analysis Tools Using Data from 'Alpha Vantager'
 Version: 0.1.0
-Author:
-  Author@R
+Author@R:
   person("Edward Wei", "Develepor", role = c("aut", "cre", "cph"))
 Maintainer: Edward Wei <edwwei2020@gmail.com>
 Description: To pull data from 'ALPHA VANTAGE' <https://www.alphavantage.co/>, 
